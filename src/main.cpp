@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void pause() {
+void pause_() {
     cout << "\nDevam etmek icin ENTER'a basin...";
     cin.ignore();
     cin.get();
@@ -169,7 +169,7 @@ int main() {
                 cout << "Gecersiz secim.\n";
         }
 
-        if (choice != 20) pause();
+        if (choice != 20) pause_();
 
     } while (choice != 20);
 

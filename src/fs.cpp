@@ -180,6 +180,8 @@ void fs_ls() {
 }
 
 bool fs_exists(const string &filename) {
+    if(filename.empty()) return false;
+
     Metadata metadata;
     if (!fs_load_metadata(metadata)) return false;
     for (int i = 0; i < MAX_FILES; ++i)
@@ -223,6 +225,9 @@ bool fs_append(const string &filename, const char *data, int size) {
 }
 
 bool fs_rename(const string &old_name, const string &new_name) {
+    if (!fs_exists(old_name)) return false;
+    if (fs_exists(new_name)) return false;
+
     if (new_name.length() >= FILENAME_MAX_LEN) return false;
 
     Metadata metadata;
@@ -323,6 +328,9 @@ bool fs_mv(const string &old_name, const string &new_name) {
 }
 
 bool fs_diff(const string &file1, const string &file2) {
+    if (!fs_exists(file1)) return false;
+    if (!fs_exists(file2)) return false;
+
     int size1 = fs_size(file1);
     int size2 = fs_size(file2);
 
@@ -359,8 +367,10 @@ bool fs_backup(const string &backup_filename) {
 
 bool fs_restore(const string &backup_filename) {
     int fd_src = open(backup_filename.c_str(), O_RDONLY);
+    if(fd_src <= 0) return false;
+    
     int fd_dst = open(DISK_NAME, O_CREAT | O_WRONLY | O_TRUNC, 0666);
-    if (fd_src < 0 || fd_dst < 0) return false;
+    if(fd_dst <= 0) return false;
 
     char buffer[1024];
     int bytes;
